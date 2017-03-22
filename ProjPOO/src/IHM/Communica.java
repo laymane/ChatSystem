@@ -44,13 +44,13 @@ public class Communica extends JFrame{
 	public void doTheThing(){
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(instanceName), "utf-8"));
-		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			reader = new BufferedReader(new InputStreamReader(new FileInputStream(buddyName),"utf-8"));
-		} catch (UnsupportedEncodingException | FileNotFoundException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -92,7 +92,6 @@ public class Communica extends JFrame{
 	}
 	
 	class myCommunicaListener implements ActionListener{
-		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if(((JButton)arg0.getSource()).getName().equals("send")){
 				String s = textToSend.getText();

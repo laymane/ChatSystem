@@ -43,7 +43,9 @@ public class CommunicaTCPServer {
 			 inReaderList.add(bf);
 			 System.out.println("Server connected, client connected to server");
 			
-			 new clientThread(outWriterList.get(outWriterList.size()-1), inReaderList.get(inReaderList.size()-1), "patate").run();		 
+			 new clientThread(outWriterList.get(outWriterList.size()-1), inReaderList.get(inReaderList.size()-1), "patate"+inReaderList.size()).start();		 
+			 
+			 System.out.println("Dumbass connected, resuming listening duty");
 			 }
 			 
 		} catch(IOException e){
@@ -58,16 +60,22 @@ public class CommunicaTCPServer {
 			e.printStackTrace();
 		}
 	}
+	public class listeningThread extends Thread{
+		
+		
+	}
 	
 	public class clientThread extends Thread {
 		
 		BufferedReader bf;
 		PrintWriter in;
-				
+		String clientName;
+		
 		public clientThread(PrintWriter in, BufferedReader bf, String str){
 			super (str);
 			this.bf = bf;
 			this.in = in;	
+			this.clientName = str;
 			
 		}
 		
@@ -79,7 +87,7 @@ public class CommunicaTCPServer {
 			
 			while(true){
 				try {
-					System.out.println("Client said: "+bf.readLine());
+					System.out.println(clientName+" said: "+bf.readLine());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
