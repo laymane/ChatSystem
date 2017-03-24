@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import DebugTools.Err;
 
@@ -17,11 +18,13 @@ public class CommunicaTCPServer {
 	ArrayList<Socket> clientList;
 	ArrayList<PrintWriter> outWriterList;
 	ArrayList<BufferedReader> inReaderList;
+	ArrayList<Socket> clientReceiverList;
 	 
 	
 	public CommunicaTCPServer(int port) {
 		
 		 clientList = new ArrayList<Socket>();
+		 clientReceiverList = new ArrayList<Socket>();
 		 outWriterList = new ArrayList<PrintWriter>();
 		 inReaderList= new ArrayList<BufferedReader>();
 		 
@@ -41,6 +44,9 @@ public class CommunicaTCPServer {
 			 InputStreamReader in = new InputStreamReader(sk.getInputStream());
 			 bf = new BufferedReader(in);
 			 inReaderList.add(bf);
+			 
+			 clientReceiverList.add(new Socket("localhost", 4451));
+			 
 			 System.out.println("Server connected, client connected to server");
 			
 			 new clientThread(outWriterList.get(outWriterList.size()-1), inReaderList.get(inReaderList.size()-1), "patate"+inReaderList.size()).start();		 
@@ -61,7 +67,7 @@ public class CommunicaTCPServer {
 		}
 	}
 	public class listeningThread extends Thread{
-		
+	
 		
 	}
 	
@@ -87,7 +93,12 @@ public class CommunicaTCPServer {
 			
 			while(true){
 				try {
-					System.out.println(clientName+" said: "+bf.readLine());
+					String s = bf.readLine();
+					System.out.println(clientName+" said: "+s);
+					for(Iterator<Socket> ic = clientList.iterator(); ic.hasNext();){
+						in.println(clientName+" said: "+s);
+					}
+						
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
