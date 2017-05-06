@@ -2,11 +2,9 @@ import Heartbeat.*;
 
 public class HellolauncherProbe {
 
-	   public static void main(String[] args){
+	   public static void main(String[] args) throws InterruptedException{
 		
-		Probe h = new Probe(); 
-		h.run();
-		System.out.println("j'ai lancé ton truc");
+		   HBController hbc = new HBController("Robert");
 	}
 	
 	

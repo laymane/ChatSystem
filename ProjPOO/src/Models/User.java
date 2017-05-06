@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class User implements Serializable {
 
-	
+	private int timeSinceLastPing;
 	private  String pseudo;	
 	private String statut="";
 	private  InetAddress IP;
@@ -28,6 +28,13 @@ public class User implements Serializable {
 		IP = iP;
 		this.port = port;
 		this.etat=etat;
+	}
+	public User(String pseudo){
+		this.pseudo=pseudo;
+		IP = null;
+		this.port = 0;
+		this.etat = null;
+		this.timeSinceLastPing = 0;
 	}
 	
 	public String getPseudo() {
@@ -53,8 +60,21 @@ public class User implements Serializable {
 	public void setStatut(String statut) {
 		this.statut = statut;
 	}
+	public int getTimeSinceLastPing(){
+		return this.timeSinceLastPing;
+	}
 	
+	public void incrementPing(){
+		this.timeSinceLastPing++;
+	}
 	
+	@Override
+	public String toString(){
+		String r = "";
+		r+="Ping: "+this.timeSinceLastPing;
+		r+=" Name : " +this.pseudo;
+		return r;
+	}
 
 	
 }
