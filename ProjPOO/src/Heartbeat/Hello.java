@@ -6,12 +6,14 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class Hello extends Thread {
 	
 	private String name = "Unknown";
 	private int Port = 8080;
 	private InetAddress IpGroup;
+ 
 	
 	public Hello(String nickname){
 		name = nickname;
