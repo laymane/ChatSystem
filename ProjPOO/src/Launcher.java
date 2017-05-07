@@ -19,6 +19,7 @@ public class Launcher {
 		//Communica c2 = new Communica("A2B","B2A");
 		
 		CommunicaTCPServer serv = new CommunicaTCPServer(4450);
+		serv.start();
 //		try {CommunicaTCPClient cli = new CommunicaTCPClient(4446, InetAddress.getByName("localhost"));
 //		} catch (UnknownHostException e) {	System.out.println("Unknown Host");
 //			e.printStackTrace();

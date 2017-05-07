@@ -1,6 +1,11 @@
 package Models;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class User implements Serializable {
@@ -11,9 +16,16 @@ public class User implements Serializable {
 	private String statut="";
 	private  InetAddress IP;
 	private  int port;
+	
+	private Socket socket;
+	private PrintWriter outWriter;
+	private BufferedReader Inreader;
+	
+	
 	public enum typeConnect {
-		  CONNECTED,
-		  DECONNECTED;
+		ONLINE,  
+		CONNECTED,
+		DISCONNECTED;
 	}
 	private typeConnect etat; 
 
@@ -37,7 +49,18 @@ public class User implements Serializable {
 		this.etat = null;
 		this.timeSinceLastPing = 0;
 	}
-	
+
+	public User(String pseudo2, Socket client) {
+		this.pseudo=pseudo2;
+		this.socket = client;
+		try{
+			this.outWriter = new PrintWriter(socket.getOutputStream(),true);
+			this.Inreader = new BufferedReader(new InputStreamReader(socket.getInputStream()));	
+		}catch(IOException e){
+			System.err.println("Error at user socket init process");
+			e.printStackTrace();
+		}
+	}
 	public String getPseudo() {
 		return this.pseudo;
 	}
@@ -68,6 +91,16 @@ public class User implements Serializable {
 	public void setTimeSinceLastPing(int timeSinceLastPing) {
 		this.timeSinceLastPing = timeSinceLastPing;
 	}
+	
+	public void setSocket(Socket s){this.socket = s;}
+	public Socket getSocket(){return this.socket;}
+	
+	public void setPrintWriter(PrintWriter pw){this.outWriter = pw;}
+	public PrintWriter getPrintWriter(){return this.outWriter;}
+	
+	public void setOutWriter(BufferedReader bf){this.Inreader = bf;}
+	public BufferedReader getBufferedReader(){return this.Inreader;}
+	
 	
 	public void incrementPing(){
 		this.timeSinceLastPing++;

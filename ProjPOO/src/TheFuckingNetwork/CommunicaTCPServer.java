@@ -8,105 +8,84 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Scanner;
 
 import DebugTools.Err;
+import Models.User;
 
 
-public class CommunicaTCPServer {
-	ServerSocket myServSocket;
+/**
+ * The listening thread for incoming chat connexions
+ * @author Skeard
+ *
+ */
+public class CommunicaTCPServer extends Thread {
 	
+	ServerSocket myServSocket;
+	ArrayList<Conversation> conversations;
 	ArrayList<Socket> clientList;
-	ArrayList<PrintWriter> outWriterList;
-	ArrayList<BufferedReader> inReaderList;
-	ArrayList<Socket> clientReceiverList;
+	int nbConnected = 0;
+	private int port;
+	
+	protected volatile boolean running;
 	 
 	
 	public CommunicaTCPServer(int port) {
-		
-		 clientList = new ArrayList<Socket>();
-		 clientReceiverList = new ArrayList<Socket>();
-		 outWriterList = new ArrayList<PrintWriter>();
-		 inReaderList= new ArrayList<BufferedReader>();
-		 
-
+		this.port=port;
+		conversations = new ArrayList<Conversation>();
 		try{
-			 myServSocket = new ServerSocket(port);
-			 
-			 while(true){			 
-			 System.out.println("Server waiting for dumbasses, port"+port);
-						 
-			 Socket client = myServSocket.accept();
-			 clientList.add(client);		 
-			 
-			 outWriterList.add(new PrintWriter(clientList.get(clientList.size()-1).getOutputStream(),true));
-			 BufferedReader bf;
-			 Socket sk = clientList.get(clientList.size()-1);
-			 InputStreamReader in = new InputStreamReader(sk.getInputStream());
-			 bf = new BufferedReader(in);
-			 inReaderList.add(bf);
-			 
-			 clientReceiverList.add(new Socket("localhost", 4451));
-			 
-			 System.out.println("Server connected, client connected to server");
-			
-			 new clientThread(outWriterList.get(outWriterList.size()-1), inReaderList.get(inReaderList.size()-1), "patate"+inReaderList.size()).start();		 
-			 
-			 System.out.println("Dumbass connected, resuming listening duty");
-			 }
-			 
+			 myServSocket = new ServerSocket(port);	 
 		} catch(IOException e){
-			
-			try {
-				myServSocket.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			Err.out("IO Exception");
+			System.err.println("Exception while opening server socket on port "+port+" in COMMUNICA");
 			e.printStackTrace();
 		}
 	}
-	public class listeningThread extends Thread{
 	
-		
-	}
-	
-	public class clientThread extends Thread {
-		
-		BufferedReader bf;
-		PrintWriter in;
-		String clientName;
-		
-		public clientThread(PrintWriter in, BufferedReader bf, String str){
-			super (str);
-			this.bf = bf;
-			this.in = in;	
-			this.clientName = str;
+	public void run(){
+		running = true;
+		Socket client = null;
+		while(running){			 
+			 System.out.println("Waiting for incoming connexions on port "+port+".");			 
+			try {
+				client = myServSocket.accept();
 			
-		}
-		
-		
-	
-
-
-		public void run(){
-			
-			while(true){
-				try {
-					String s = bf.readLine();
-					System.out.println(clientName+" said: "+s);
-					for(Iterator<Socket> ic = clientList.iterator(); ic.hasNext();){
-						in.println(clientName+" said: "+s);
-					}
-						
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+			} catch (IOException e) {
+				System.err.println("Exception while accepting serversocket connexion in COMMUNICA");
+				running = false;
+				e.printStackTrace();
 			}
-		}
+			 nbConnected++;
+			 
+			 User u = new User("Bob"+nbConnected, client);
+			 Conversation cv = new Conversation(u);	 
+			 conversations.add(cv);
+			 System.out.println("Client connected.");
+			 }
 	}
+	
+	
+	//Used to push system messages.
+//	public class serverWriter extends Thread{
+//	
+//		
+//		Scanner s;
+//		public serverWriter(){
+//			s = new Scanner(System.in);
+//		}
+//		
+//		public void run(){
+//			while(true){
+//				System.out.println("You: ");
+//				String str = s.nextLine();
+//				for(PrintWriter pw : outWriterList){
+//					pw.println(str);
+//				}
+//				System.out.println("Message sent.");
+//			}
+//		}
+//	
+//	}
+	
 	
 }
 

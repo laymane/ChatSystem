@@ -20,35 +20,35 @@ public class CommunicaTCPClient { //Connect to the server
 	public CommunicaTCPClient(int port, InetAddress ip, int localPort){
 		scanner = new Scanner(System.in);
 		try{
-			System.out.println("Client will now attempt to connect to server");
 			myClientSocket = new Socket(ip, port); //Connect to the server
 			outWriter = new PrintWriter(myClientSocket.getOutputStream(), true); 
-			System.out.println("Client will now wait for the server blabber to connect ...");
-			new serverListenerThread(localPort).start(); //Wait for a connection from the server
+			new serverListenerThread(myClientSocket).start(); 
 			System.out.println("Client connected ...");
 			while(true){
-				//Then you insult back
 				System.out.print("You: ");
 				outWriter.println(scanner.nextLine());
 			}
 		}catch(Exception e){System.out.print("Client error : " + e);}	
 	}
+	
+	
+	
+	
+	
+	
+	
 	public class serverListenerThread extends Thread{
-		ServerSocket myClientReadSocket;
-		Socket serverBlabber;
+		Socket myServListeneer;
 		BufferedReader inReader;
-		PrintWriter outWriter;
-		public serverListenerThread(int port){
-			try{
-				myClientReadSocket = new ServerSocket(port);
-				serverBlabber = myClientReadSocket.accept();
-				 inReader = new BufferedReader(new InputStreamReader(serverBlabber.getInputStream()));
-				 outWriter = new PrintWriter(serverBlabber.getOutputStream(),true);
-				 System.out.println("Ready to read shit from server\n");
-			} catch (Exception e){
-				System.out.println("The client listener is going awol and said: "+e);
+		InputStreamReader inp;
+		public serverListenerThread(Socket s){
+			 try {
+				 inp = new InputStreamReader(s.getInputStream());
+				inReader = new BufferedReader(inp);
+			} catch (IOException e) {
+				System.out.println("IO exception on the server listening thread");
+				e.printStackTrace();
 			}
-			
 		}
 		
 		public void run(){
@@ -58,7 +58,6 @@ public class CommunicaTCPClient { //Connect to the server
 					String s = inReader.readLine();
 					System.out.println("Server "+" said: "+s);	
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
