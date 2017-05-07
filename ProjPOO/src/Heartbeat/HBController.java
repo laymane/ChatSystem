@@ -1,20 +1,27 @@
 package Heartbeat;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Models.User;
+import Models.User.typeConnect;
 
 public class HBController {
 	ArrayList<User> userList;
 	Hello helloer;
 	Probe prober;
 	
-	String localUser;
+
+
 	
-	public HBController(String localUserName) throws InterruptedException{
-		localUser = localUserName;
-		helloer = new Hello(localUserName);
-		prober = new Probe();
+	
+	
+	public HBController(String localUserName, String localIP, String multiIP, int localPort, int remotePort, typeConnect currentetat) throws UnknownHostException {
+		helloer = new Hello(localUserName, localIP, multiIP, localPort, remotePort, currentetat);
+		
+		
+		prober = new Probe(multiIP, remotePort);
 		
 		
 		userList = new ArrayList<User>();
@@ -25,10 +32,16 @@ public class HBController {
 		helloer.start();
 		while(true){
 			displayUserList();
-			Thread.sleep(10000);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			incrementUserList();
 		}
 	}
+	
 	
 	private void runHello(){
 		this.helloer.start();
@@ -43,8 +56,9 @@ public class HBController {
 	private void displayUserList(){
 		System.out.println("Displaying userlist: \n");
 		for(int i = 0; i<userList.size();i++){
-			System.out.println((i+1)+ " " + userList.get(i).toString()+"\n");
+			System.out.println((i+1)+ " " + userList.get(i)+"\n");
 		}
+
 		
 	}
 	private void incrementUserList(){
