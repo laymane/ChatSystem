@@ -10,7 +10,9 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Random;
 
+import javax.swing.DefaultListModel;
 import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import Models.User;
@@ -20,6 +22,7 @@ public class Probe extends Thread {
 	
 	private int Port;
 	private InetAddress IpGroup;
+	private DefaultListModel<User> m = null;
 
 	private ArrayList<User> userList;
 	User o;
@@ -35,9 +38,18 @@ public class Probe extends Thread {
 		}
 		
 	}
+	public Probe(String multiIP, int remotePort, DefaultListModel<User> m){
+		this(multiIP, remotePort);
+		this.m=m;
+		
+	}
 	public void setUserList(ArrayList<User> userList){
 		this.userList=userList;
 		
+	}
+	
+	public void addDefaultListModel(DefaultListModel<User> m){
+		this.m = m;
 	}
 	public void run(){
 		
@@ -46,6 +58,7 @@ public class Probe extends Thread {
 				mcSocket = new MulticastSocket(Port);
 				mcSocket.joinGroup(IpGroup);
 				while(true){
+					try{Thread.sleep(5000);}catch(Exception e){}
 					System.out.println("attente de datagramme");
 					byte[] buf = new byte[1000];
 					DatagramPacket recv = new DatagramPacket(buf, buf.length);
@@ -60,7 +73,19 @@ public class Probe extends Thread {
 				    */			    
 
 				    verifyAndUpdate(o);
-				    //System.out.println("je vais vérifier"+o);
+				    int i = 0;
+					Random randomGenerator = new Random();
+					 
+						
+						  try {
+							Thread.sleep(2000);
+							  m.addElement(new User("User "+randomGenerator.nextInt(20)));
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					
+				
 				    
 				       
 				    }				
@@ -84,6 +109,7 @@ public class Probe extends Thread {
 		//System.out.println("test");
 		if(userList.size()==0){
 			userList.add(o);
+			m.addElement(o);
 		}
 		else{
 
@@ -91,6 +117,7 @@ public class Probe extends Thread {
 			//System.out.println("coucou j'ai mis à 0");
 	        if (userList.get(i).getIP().equals(o.getIP())) {
 	        	userList.get(i).setTimeSinceLastPing(0);
+	        	
 	        	System.out.println("doublon -> remis à0");
 	        }
 	        else{

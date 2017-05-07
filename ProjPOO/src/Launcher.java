@@ -3,6 +3,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import IHM.Communica;
+import IHM.UserlistIHM;
 import TheFuckingNetwork.CommunicaTCPClient;
 import TheFuckingNetwork.CommunicaTCPServer;
 
@@ -17,9 +18,12 @@ public class Launcher {
 		
 		//Communica c = new Communica("B2A","A2B"); //Instance name to set as arg
 		//Communica c2 = new Communica("A2B","B2A");
+		UserlistIHM ihm= new UserlistIHM();
+		ihm.launch();
 		
-		CommunicaTCPServer serv = new CommunicaTCPServer(4450);
-		serv.start();
+		
+		//CommunicaTCPServer serv = new CommunicaTCPServer(4450);
+		//serv.start();
 //		try {CommunicaTCPClient cli = new CommunicaTCPClient(4446, InetAddress.getByName("localhost"));
 //		} catch (UnknownHostException e) {	System.out.println("Unknown Host");
 //			e.printStackTrace();

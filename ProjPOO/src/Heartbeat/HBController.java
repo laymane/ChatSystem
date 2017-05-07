@@ -4,44 +4,39 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
+
 import Models.User;
 import Models.User.typeConnect;
 
-public class HBController {
+public class HBController extends Thread {
 	ArrayList<User> userList;
 	Hello helloer;
 	Probe prober;
 	
-
-
-	
-	
-	
 	public HBController(String localUserName, String localIP, String multiIP, int localPort, int remotePort, typeConnect currentetat) throws UnknownHostException {
-		helloer = new Hello(localUserName, localIP, multiIP, localPort, remotePort, currentetat);
-		
-		
-		prober = new Probe(multiIP, remotePort);
-		
-		
+		helloer = new Hello(localUserName, localIP, multiIP, localPort, remotePort, currentetat);		
+		prober = new Probe(multiIP, remotePort);	
 		userList = new ArrayList<User>();
 		prober.setUserList(userList);
-		
-		
 		prober.start();
 		helloer.start();
-		while(true){
-			displayUserList();
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			incrementUserList();
-		}
+		
+//		while(true){
+//			displayUserList();
+//			try {
+//				Thread.sleep(5000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			incrementUserList();
+//		}
 	}
 	
+	public void addModelToProbe (DefaultListModel<User>m){
+		this.prober.addDefaultListModel(m);
+	}
 	
 	private void runHello(){
 		this.helloer.start();
