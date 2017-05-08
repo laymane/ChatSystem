@@ -11,12 +11,13 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import Models.User;
-
+import Models.Variables;
 
 public class Probe extends Thread {
 	
@@ -24,7 +25,7 @@ public class Probe extends Thread {
 	private InetAddress IpGroup;
 	private DefaultListModel<User> m = null;
 
-	private ArrayList<User> userList;
+	private CopyOnWriteArrayList<User> userList;
 	User o;
 	
 	
@@ -37,49 +38,49 @@ public class Probe extends Thread {
 			e.printStackTrace();
 		}
 		
+		
 	}
 	public Probe(String multiIP, int remotePort, DefaultListModel<User> m){
 		this(multiIP, remotePort);
 		this.m=m;
 		
 	}
-	public void setUserList(ArrayList<User> userList){
-		this.userList=userList;
+	public void setUserList(CopyOnWriteArrayList<User> userList2){
+		this.userList=userList2;
 		
 	}
 	
 	public void addDefaultListModel(DefaultListModel<User> m){
 		this.m = m;
 	}
+	
+	
 	public void run(){
-		
 		MulticastSocket mcSocket = null;
 			try {
 				mcSocket = new MulticastSocket(Port);
 				mcSocket.joinGroup(IpGroup);
+				try{Thread.sleep(Variables.TIME_BETWEEN_PROBING);}catch(Exception e){}
 				while(true){
-					try{Thread.sleep(5000);}catch(Exception e){}
+					
 					System.out.println("attente de datagramme");
 					byte[] buf = new byte[1000];
 					DatagramPacket recv = new DatagramPacket(buf, buf.length);
 					mcSocket.receive(recv);
 				    ByteArrayInputStream byteStream = new ByteArrayInputStream(buf);
 				    ObjectInputStream is = new ObjectInputStream(new BufferedInputStream(byteStream));
-					//System.out.println("JE DISPLAY LE");
 				    User o = (User)is.readObject();
-				    /*System.out.println("voici le port"+o.getPort());
-				    System.out.println("voici le ip"+o.getIP());
-				    System.out.println("voici le pseudo"+o.getPseudo());
-				    */			    
-
-				    verifyAndUpdate(o);
-				    int i = 0;
+				    verifyAndUpdateUserList(o);
+				    
+				    /* this part is for testing purposes only */
 					Random randomGenerator = new Random();
 					 
 						
 						  try {
 							Thread.sleep(2000);
-							  m.addElement(new User("User "+randomGenerator.nextInt(20)));
+							User us = new User("User "+randomGenerator.nextInt(20));
+							synchronized(userList){userList.add(us);}
+							 m.addElement(us);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -87,7 +88,7 @@ public class Probe extends Thread {
 					
 				
 				    
-				       
+				     /* End of the testing part */  
 				    }				
 					
 					
@@ -101,31 +102,35 @@ public class Probe extends Thread {
 			}
 	}
 			
-		
+
 	
-	public void verifyAndUpdate(User o){
+	public void verifyAndUpdateUserList(User o){
 		//Eviter l'ajout de doublons
 		//Pour les users deja existants: timeSinceLastPing = 0;
 		//System.out.println("test");
-		if(userList.size()==0){
-			userList.add(o);
-			m.addElement(o);
-		}
-		else{
-
-		for(int i = 0; i<userList.size();i++){
-			//System.out.println("coucou j'ai mis à 0");
-	        if (userList.get(i).getIP().equals(o.getIP())) {
-	        	userList.get(i).setTimeSinceLastPing(0);
-	        	
-	        	System.out.println("doublon -> remis à0");
-	        }
-	        else{
-	        	System.out.println("ok no doublons");
-	        }
-	    }
+		synchronized(userList){
+			if(userList.size()==0){
+				userList.add(o);
+				m.addElement(o);
+			}
+			else{
+	
+				for(int i = 0; i<userList.size();i++){
+			        if (userList.get(i).getIP().equals(o.getIP())) {
+			        	userList.get(i).setTimeSinceLastPing(0);			        	
+			        	System.out.println("doublon -> remis a�0");
+			        	break;
+			        }
+			        else{
+			        	System.out.println("ok no doublons");
+			        	userList.add(o);
+			        	m.addElement(o);
+			        }
+				}
+			}		
 		}
 	}
+
 }
 	
 	

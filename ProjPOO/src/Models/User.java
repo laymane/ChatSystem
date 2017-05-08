@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class User implements Serializable {
@@ -44,7 +45,12 @@ public class User implements Serializable {
 	}
 	public User(String pseudo){
 		this.pseudo=pseudo;
-		IP = null;
+		try {
+			IP = InetAddress.getByName("226.255.255.255");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.port = 0;
 		this.etat = null;
 		this.timeSinceLastPing = 0;
@@ -116,6 +122,18 @@ public class User implements Serializable {
 		r+=" Etat : " +this.etat;
 		r+=" Last Ping : "+this.timeSinceLastPing;
 		return r;
+	}
+	
+	
+	public boolean equals(User u){
+		if(u.getPort() == this.port){
+			if(u.getIP().equals(this.IP)){
+				if(u.getPseudo().equals(this.pseudo)){
+					return true;
+				} 
+			} 
+		}
+		return false;
 	}
 
 	

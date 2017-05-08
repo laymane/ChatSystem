@@ -49,8 +49,8 @@ public class UserlistIHM{
 		    add(pane);
 		   // add(addButton, BorderLayout.WEST);
 		    //add(removeButton, BorderLayout.EAST);
-		    new bogusTester(model).start();
-		    System.out.println("Bogus tester running");
+		//    new bogusTester(model).start();
+		  //  System.out.println("Bogus tester running");
 		  }
 
 		
