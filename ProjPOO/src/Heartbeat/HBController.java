@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListModel;
 
+import Models.LocalUser;
 import Models.User;
 import Models.User.typeConnect;
 import Models.Variables;
@@ -19,6 +20,20 @@ public class HBController extends Thread {
 	DefaultListModel<User> m;
 	Hello helloer;
 	Probe prober;
+	
+	LocalUser localUser = null;
+	
+	public HBController(LocalUser localUser){
+		this.localUser=localUser;
+		
+		try{helloer = new Hello(localUser.getUserName(), localUser.getLocalIP(), Variables.MULTI_IP, Variables.LOCAL_PORT, Variables.REMOTE_PORT, typeConnect.CONNECTED);}catch(UnknownHostException ex){System.err.println("Unknown host exception while creating helloer");}	
+		prober = new Probe( Variables.MULTI_IP, Variables.REMOTE_PORT);	
+		userList =  new CopyOnWriteArrayList<User>();
+		prober.setUserList(userList);
+		prober.start();
+		helloer.start();
+		new TicToc().start();
+	}
 	
 	public HBController(String localUserName, String localIP, String multiIP, int localPort, int remotePort, typeConnect currentetat) throws UnknownHostException {
 		helloer = new Hello(localUserName, localIP, multiIP, localPort, remotePort, currentetat);		
@@ -81,10 +96,9 @@ public class HBController extends Thread {
 			running = true;
 			while(running){
 				try {Thread.sleep(Variables.TIME_BETWEEN_PURGES);} catch (InterruptedException e) {}
-				System.out.println("TicToc does its thing");
 				incrementTimeSinceLastPingOfUsers();
 				purgeOldUsers();
-				displayUserList();
+			//	displayUserList();
 			}
 			
 		}

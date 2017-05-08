@@ -3,7 +3,11 @@ package TheFuckingNetwork;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
+import javax.swing.JPanel;
+
+import IHM.ChatFrame.ConversationPanelElements;
 import Models.User;
 
 /**
@@ -15,9 +19,14 @@ public class Conversation {
 		private String pendingMessages=""; //To modify into serialized messages array
 		private ArrayList<User> usersInConversation;
 		private ArrayList<clientThread> clientThreads;
+		private int id;
+		private JPanel jpanel;
+		private ConversationPanelElements conversationPanelElements=null;
 		
 		
 		public Conversation(){
+			Random randomGenerator = new Random();
+			id= randomGenerator.nextInt(250000000);
 			usersInConversation = new ArrayList<User>();
 			clientThreads = new ArrayList<clientThread>();
 			System.out.println("Arrays inited.");
@@ -106,6 +115,7 @@ public class Conversation {
 			public String getUsernamesInConversation(){
 				String s="";
 				for(User u: usersInConversation){
+					System.err.println("User in conversation called: "+u.getPseudo());
 					s+=u.getPseudo()+" ";
 				}
 				return s;
@@ -118,8 +128,16 @@ public class Conversation {
 				while(running){
 					try {
 						String s =(bf.readLine());
-						receiveMessage(s);
+						receiveMessage(s); //For the time being ignored
+						if(!u.pseudoInit){
+							u.setPseudo(s);
+							userName=s;
+							u.pseudoInit=true;
+							System.err.println("User inited his name:"+s);
+						}
 						System.out.println(userName+ ": "+s); //Debug
+						if(conversationPanelElements!=null)
+							conversationPanelElements.remoteUserSendMessage(userName+": "+ s);
 					} catch (IOException e) {
 						running = false;
 						System.err.println("Error in conversation while reading distant user messages, remote user disconnected");
@@ -129,6 +147,32 @@ public class Conversation {
 					}
 				}
 			}
+		}
+
+
+		public String getUsersInConversation() {
+			String s = "";
+			for(User u : usersInConversation){
+				while(!u.pseudoInit){System.err.println("Waiting for pseudo init...");}
+				if(u.pseudoInit){
+					System.err.println("User in conversation called: "+u.getPseudo());
+				}
+				s+=u.getPseudo();
+				s+=", ";
+			}
+			s=s.substring(0, s.length()-2);
+			return s;
+		}
+		public String getID() {
+			return String.valueOf(this.id);
+		}
+		public void addChat(JPanel jPanel6) {
+			this.jpanel=jPanel6;
+			
+		}
+		public void addConversationPanelElements(ConversationPanelElements conversationPanelElements) {
+			this.conversationPanelElements =conversationPanelElements;
+			
 		}
 		
 		

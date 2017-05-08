@@ -5,6 +5,16 @@
  */
 package IHM;
 import java.awt.Component;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.DefaultListModel;
+
+import Heartbeat.HBController;
+import Models.LocalUser;
+import Models.User;
+import Models.Variables;
+import TheFuckingNetwork.CommunicaTCPServer;
 
 /**
  *
@@ -12,12 +22,23 @@ import java.awt.Component;
  */
 public class LogInFrame extends javax.swing.JFrame {
 
+	LocalUser localUser = null;
     /**
      * Creates new form NewJFrame1
      */
-    public LogInFrame() {
-        initComponents();
+    public LogInFrame(LocalUser lu) {
+    	 this();
+    	this.localUser=lu;
+     
     }
+    public LogInFrame() {
+    	 initComponents();
+    	 this.addWindowListener( new WindowAdapter() {
+    		    public void windowOpened( WindowEvent e ){
+    		    	jTextField1.requestFocus();
+    		    }
+    		}); 
+	}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -38,14 +59,15 @@ public class LogInFrame extends javax.swing.JFrame {
         setAutoRequestFocus(false);
         setPreferredSize(new java.awt.Dimension(800, 600));
 
-        jButton1.setText("Log in");
+        jButton1.setText("Log in")	;
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jTextField1.setText("Your nickname");
+        //jTextField1.setText("Your nickname");
+        new GhostText(jTextField1, "Your nickname");
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
@@ -104,13 +126,28 @@ public class LogInFrame extends javax.swing.JFrame {
     }// </editor-fold>                        
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
+    	goToChatFrame();
     }                                           
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-                remove(jPanel1);
-            
-                }                                        
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {    
+    	goToChatFrame();
+      }     
+    
+    //Lots of stuff here should go into the launcher. Aymane, fix this.
+    private void goToChatFrame(){
+	    	System.out.println(jTextField1.getText());
+			localUser.setUserName(jTextField1.getText());
+	        remove(jPanel1);
+	        this.setVisible(false);
+	        dispose();
+	        HBController hbc = new HBController(localUser);
+	        ChatFrame cf = new ChatFrame(localUser);
+	        cf.setVisible(true);
+	        hbc.addModelToProbe(cf.getListModel());
+	        CommunicaTCPServer serv = new CommunicaTCPServer(Variables.LOCAL_LISTENING_PORT_TCPCONNEXIONS, cf);
+	        serv.start();
+	  	 
+    }
 
     /**
      * @param args the command line arguments

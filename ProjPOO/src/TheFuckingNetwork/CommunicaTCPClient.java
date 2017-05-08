@@ -17,13 +17,14 @@ public class CommunicaTCPClient { //Connect to the server
 	
 	Scanner scanner;
 	
-	public CommunicaTCPClient(int port, InetAddress ip, int localPort){
+	public CommunicaTCPClient(int port, InetAddress ip, int localPort, String pseudo){
 		scanner = new Scanner(System.in);
 		try{
 			myClientSocket = new Socket(ip, port); //Connect to the server
 			outWriter = new PrintWriter(myClientSocket.getOutputStream(), true); 
 			new serverListenerThread(myClientSocket).start(); 
 			System.out.println("Client connected ...");
+			outWriter.println(pseudo);
 			while(true){
 				System.out.print("You: ");
 				outWriter.println(scanner.nextLine());

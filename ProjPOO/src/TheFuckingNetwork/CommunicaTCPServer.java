@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+
 import DebugTools.Err;
+import IHM.ChatFrame;
 import Models.User;
 
 
@@ -28,9 +31,11 @@ public class CommunicaTCPServer extends Thread {
 	private int port;
 	
 	protected volatile boolean running;
+	public ChatFrame chatFrame;
 	 
 	
-	public CommunicaTCPServer(int port) {
+	public CommunicaTCPServer(int port, ChatFrame chatFrame) {
+		this.chatFrame=chatFrame;
 		this.port=port;
 		conversations = new ArrayList<Conversation>();
 		try{
@@ -59,6 +64,7 @@ public class CommunicaTCPServer extends Thread {
 			 User u = new User("Bob"+nbConnected, client);
 			 Conversation cv = new Conversation(u);	 
 			 conversations.add(cv);
+			  chatFrame.startConversation(cv);
 			 System.out.println("Client connected.");
 			 }
 	}

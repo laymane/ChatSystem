@@ -17,7 +17,7 @@ public class User implements Serializable {
 	private String statut="";
 	private  InetAddress IP;
 	private  int port;
-	
+	public boolean pseudoInit;
 	private Socket socket;
 	private PrintWriter outWriter;
 	private BufferedReader Inreader;
@@ -38,6 +38,7 @@ public class User implements Serializable {
 	 * @param etat CONNECTION ou DECONNECTION
 	 */
 	public User(String pseudo, InetAddress iP, int port, typeConnect etat) {
+		this.pseudoInit = false;
 		this.pseudo = pseudo;
 		IP = iP;
 		this.port = port;
@@ -69,6 +70,9 @@ public class User implements Serializable {
 	}
 	public String getPseudo() {
 		return this.pseudo;
+	}
+	public void setPseudo(String ps){
+		this.pseudo = ps;
 	}
 	
 	public InetAddress getIP() {
