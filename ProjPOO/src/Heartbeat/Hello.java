@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import Models.User;
 import Models.User.typeConnect;
+import Models.Variables;
 
 public class Hello extends Thread {
 	
@@ -65,7 +66,7 @@ public class Hello extends Thread {
 			while(true){
 				mcSocket.send(hi);
 				System.out.println("envoi en cours"+hi.getAddress().toString());
-				Thread.sleep(5000);
+				Thread.sleep(Variables.TIME_BETWEEN_HELLOING);
 			}
 			//
 
