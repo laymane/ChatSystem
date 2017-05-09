@@ -35,8 +35,8 @@ public class HBController extends Thread {
 		new TicToc().start();
 	}
 	
-	public HBController(String localUserName, String localIP, String multiIP, int localPort, int remotePort, typeConnect currentetat) throws UnknownHostException {
-		helloer = new Hello(localUserName, localIP, multiIP, localPort, remotePort, currentetat);		
+	public HBController(String localUserName, String localIP, String multiIP, int localPort, int remotePort, typeConnect currentetat) {
+		try{helloer = new Hello(localUserName, localIP, multiIP, localPort, remotePort, currentetat);}catch(UnknownHostException ex){System.err.println("Unknown host exception while creating helloer");}	
 		prober = new Probe(multiIP, remotePort);	
 		userList =  new CopyOnWriteArrayList<User>();
 		prober.setUserList(userList);

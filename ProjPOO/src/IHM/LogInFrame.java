@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.DefaultListModel;
 
 import Heartbeat.HBController;
+import Heartbeat.Hello;
 import Models.LocalUser;
 import Models.User;
 import Models.Variables;
@@ -212,12 +213,17 @@ private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {
 
     		String textField = jTextField1.getText();
     		int serverPort = Variables.LOCAL_LISTENING_PORT_TCPCONNEXIONS;
+    		int helloPort = Variables.LOCAL_PORT;
     		
     		if(localUser==null){
     			System.out.println("localUser is null");
     		}
-    		if(!jTextField2.getText().equals(""))
-    			serverPort=Integer.parseInt(jTextField2.getText());
+    		if((!jTextField2.getText().equals("")) && (!jTextField2.getText().equals("Server Port"))){
+    			serverPort=Integer.parseInt(jTextField2.getText());}
+    		
+    		if(!jTextField3.getText().equals(""))
+    			System.out.println("coucou");
+    		
 			localUser.setUserName(textField);
 	        remove(jPanel1);
 	        this.setVisible(false);
