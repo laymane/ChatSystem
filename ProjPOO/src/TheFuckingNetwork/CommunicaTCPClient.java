@@ -10,25 +10,37 @@ import java.net.Socket;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import Models.User;
+
 public class CommunicaTCPClient { //Connect to the server
 	Socket myClientSocket;
 	
 	PrintWriter outWriter;
+	User distantUser;
+	Conversation conversation;
+//	Scanner scanner;
 	
-	Scanner scanner;
+	public Conversation getTcpClientConversation(){
+		return this.conversation;
+	}
 	
-	public CommunicaTCPClient(int port, InetAddress ip, int localPort, String pseudo){
-		scanner = new Scanner(System.in);
+	public CommunicaTCPClient(int port, InetAddress ip, int localPort, String pseudo,CommunicaTCPServer tcpServ){
+//		scanner = new Scanner(System.in);
 		try{
 			myClientSocket = new Socket(ip, port); //Connect to the server
-			outWriter = new PrintWriter(myClientSocket.getOutputStream(), true); 
+			distantUser = new User(pseudo, myClientSocket);
+			
+			outWriter = distantUser.getPrintWriter(); 
+			conversation = new Conversation(distantUser);
+			tcpServ.addConversation(conversation);
 			new serverListenerThread(myClientSocket).start(); 
 			System.out.println("Client connected ...");
+			
 			outWriter.println(pseudo);
-			while(true){
-				System.out.print("You: ");
-				outWriter.println(scanner.nextLine());
-			}
+//			while(manual){
+//				System.out.print("You: ");
+//				outWriter.println(scanner.nextLine());
+//			}
 		}catch(Exception e){System.out.print("Client error : " + e);}	
 	}
 	

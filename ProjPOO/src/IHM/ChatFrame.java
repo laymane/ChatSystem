@@ -6,15 +6,22 @@ package IHM;
  */
 
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 import Models.LocalUser;
 import Models.User;
+import TheFuckingNetwork.CommunicaTCPClient;
+import TheFuckingNetwork.CommunicaTCPServer;
 import TheFuckingNetwork.Conversation;
 
 /**
@@ -23,6 +30,7 @@ import TheFuckingNetwork.Conversation;
  */
 public class ChatFrame extends javax.swing.JFrame {
 
+	CommunicaTCPServer tcpServ=null;
 	LocalUser localUser;
     /**
      * Creates new form NewJFrame
@@ -32,9 +40,14 @@ public class ChatFrame extends javax.swing.JFrame {
 		this.localUser=lu;
 		
 	}
+	public void setTcpServ(CommunicaTCPServer tcpServ){
+		this.tcpServ=tcpServ;
+	}
     public ChatFrame() {
+    	
         initComponents();
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -115,48 +128,12 @@ public class ChatFrame extends javax.swing.JFrame {
                     .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 561, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
+        
 
        
 
-        jTextPane5.setText("HELLOOO");
-        jScrollPane5.setViewportView(jTextPane5);
 
-        jButton7.setBackground(new java.awt.Color(255, 204, 153));
-        jButton7.setText("Quit this conv.");
-        jButton7.setToolTipText("");
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(textField5, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton6)
-                .addContainerGap())
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton7)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 668, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addComponent(jButton7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textField5, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                        .addComponent(jButton6)
-                        .addGap(14, 14, 14)))
-                .addContainerGap())
-        );
-
-        jTabbedPane2.addTab("tab1", jPanel8);
-
+       
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -186,12 +163,28 @@ public class ChatFrame extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10))
         );
-
+   
         pack();
-    }// </editor-fold>                        
+    // </editor-fold>                        
 
+
+	list1.addMouseListener(new MouseAdapter() {
+	    public void mouseClicked(MouseEvent evt) {
+	        JList list = (JList)evt.getSource();
+	        if (evt.getClickCount() >= 2) {
+	            // Double-click detected
+	            User u = (User)list.getSelectedValue();
+	            System.out.println("Double click detected "+u.getPseudo());
+	                        	
+	            	startConversationToDistantUser(u);
+	            
+
+	        } 
+	    }
+	});
+    }
     private void list1ActionPerformed(java.awt.event.ActionEvent evt) {                                      
-        // TODO add your handling code here:
+        System.out.println("Action performed !");
     }                                     
 
     private void textField3ActionPerformed(java.awt.event.ActionEvent evt) {                                           
@@ -243,8 +236,27 @@ public class ChatFrame extends javax.swing.JFrame {
 	 public void endConversation(JPanel jp){
 		 jTabbedPane2.remove(jp);
 	 }
-	 public void startConversation(Conversation c){
-		 c.addConversationPanelElements(new ConversationPanelElements(c));
+	 public ConversationPanelElements startConversation(Conversation c){ 
+		 ConversationPanelElements cpe = new ConversationPanelElements(c);
+		 c.addConversationPanelElements(cpe);
+		 return cpe;
+	 }
+	 public void startConversationToDistantUser(User u){
+		 try{
+			 
+			 CommunicaTCPClient cli = new CommunicaTCPClient(4450, InetAddress.getByName("localhost"), u.getPort(), u.getPseudo(),tcpServ);
+			 Conversation c = cli.getTcpClientConversation();
+			 System.err.println("Client inited..");
+			 try{Thread.sleep(200);}catch (InterruptedException e) {}
+			 ConversationPanelElements cpe = startConversation(c);
+			 cpe.remoteUserSendMessage("You started a conversation with "+c.getUsersInConversation());
+			 //Check some port fuckery
+			 //Roll the dices
+			 //Profit
+			 
+		 } catch (UnknownHostException e) {	System.out.println("Unknown Host");
+			e.printStackTrace();
+		}
 	 }
 	
 
@@ -380,5 +392,8 @@ public class ConversationPanelElements {
 	        jTabbedPane2.addTab(remoteUser, jPanel6);
 		
 	}
-}
+	}
+
+
+
 }

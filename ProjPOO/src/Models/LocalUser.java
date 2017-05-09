@@ -8,6 +8,9 @@ public class LocalUser {
 	private String localIP;
 	/*Todo: Fill all stuff here*/
 	
+	public void setPseudo(String s){this.username=s;}
+	public String getPseudo(){return this.username;}
+	
 	public void setUserName(String s){this.username=s;}
 	public String getUserName(){return this.username;}
 	

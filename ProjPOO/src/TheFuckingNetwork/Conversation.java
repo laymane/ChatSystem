@@ -133,7 +133,6 @@ public class Conversation {
 							u.setPseudo(s);
 							userName=s;
 							u.pseudoInit=true;
-							System.err.println("User inited his name:"+s);
 						}
 						System.out.println(userName+ ": "+s); //Debug
 						if(conversationPanelElements!=null)
@@ -153,7 +152,7 @@ public class Conversation {
 		public String getUsersInConversation() {
 			String s = "";
 			for(User u : usersInConversation){
-				while(!u.pseudoInit){System.err.println("Waiting for pseudo init...");}
+				while(!u.pseudoInit){System.out.println("Waiting username..");}
 				if(u.pseudoInit){
 					System.err.println("User in conversation called: "+u.getPseudo());
 				}

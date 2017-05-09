@@ -57,15 +57,13 @@ public class Hello extends Thread {
 	    byte[] sendBuf = byteStream.toByteArray();	
 		//String message = name;
 		MulticastSocket mcSocket = null;
-		//blabla
-		//dosike
 		try {
 			mcSocket = new MulticastSocket(Port);
 			mcSocket.joinGroup(IpGroup);
 			DatagramPacket hi = new DatagramPacket(sendBuf, sendBuf.length, IpGroup, Port);
 			while(true){
 				mcSocket.send(hi);
-				System.out.println("envoi en cours"+hi.getAddress().toString());
+			//	System.out.println("envoi en cours"+hi.getAddress().toString());
 				Thread.sleep(Variables.TIME_BETWEEN_HELLOING);
 			}
 			//

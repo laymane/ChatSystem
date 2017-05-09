@@ -135,7 +135,7 @@ public class LogInFrame extends javax.swing.JFrame {
     
     //Lots of stuff here should go into the launcher. Aymane, fix this.
     private void goToChatFrame(){
-	    	System.out.println(jTextField1.getText());
+	    
 			localUser.setUserName(jTextField1.getText());
 	        remove(jPanel1);
 	        this.setVisible(false);
@@ -144,7 +144,8 @@ public class LogInFrame extends javax.swing.JFrame {
 	        ChatFrame cf = new ChatFrame(localUser);
 	        cf.setVisible(true);
 	        hbc.addModelToProbe(cf.getListModel());
-	        CommunicaTCPServer serv = new CommunicaTCPServer(Variables.LOCAL_LISTENING_PORT_TCPCONNEXIONS, cf);
+	        CommunicaTCPServer serv = new CommunicaTCPServer(Variables.LOCAL_LISTENING_PORT_TCPCONNEXIONS, cf, localUser);
+	        cf.setTcpServ(serv);
 	        serv.start();
 	  	 
     }

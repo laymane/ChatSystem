@@ -62,8 +62,6 @@ public class Probe extends Thread {
 				mcSocket.joinGroup(IpGroup);
 				try{Thread.sleep(Variables.TIME_BETWEEN_PROBING);}catch(Exception e){}
 				while(true){
-					
-					System.out.println("attente de datagramme");
 					byte[] buf = new byte[1000];
 					DatagramPacket recv = new DatagramPacket(buf, buf.length);
 					mcSocket.receive(recv);
@@ -72,23 +70,7 @@ public class Probe extends Thread {
 				    User o = (User)is.readObject();
 				    verifyAndUpdateUserList(o);
 				    
-				    /* this part is for testing purposes only */
-					Random randomGenerator = new Random();
-					 
-						
-						  try {
-							Thread.sleep(2000);
-							User us = new User("User "+randomGenerator.nextInt(20));
-							synchronized(userList){userList.add(us);}
-							 m.addElement(us);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					
-				
 				    
-				     /* End of the testing part */  
 				    }				
 					
 					
@@ -117,12 +99,10 @@ public class Probe extends Thread {
 	
 				for(int i = 0; i<userList.size();i++){
 			        if (userList.get(i).getIP().equals(o.getIP())) {
-			        	userList.get(i).setTimeSinceLastPing(0);			        	
-			        	System.out.println("doublon -> remis a 0");
+			        	userList.get(i).setTimeSinceLastPing(0);			        		    
 			        	break;
 			        }
-			        else{
-			        	System.out.println("ok no doublons");
+			        else{			        	
 			        	userList.add(o);
 			        	m.addElement(o);
 			        }

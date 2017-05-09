@@ -12,8 +12,8 @@ import java.util.Scanner;
 
 import javax.swing.JFrame;
 
-import DebugTools.Err;
 import IHM.ChatFrame;
+import Models.LocalUser;
 import Models.User;
 
 
@@ -29,14 +29,19 @@ public class CommunicaTCPServer extends Thread {
 	ArrayList<Socket> clientList;
 	int nbConnected = 0;
 	private int port;
+	LocalUser localUser;
 	
 	protected volatile boolean running;
 	public ChatFrame chatFrame;
 	 
+	public void addConversation(Conversation cv){
+		this.conversations.add(cv);
+	}
 	
-	public CommunicaTCPServer(int port, ChatFrame chatFrame) {
+	public CommunicaTCPServer(int port, ChatFrame chatFrame, LocalUser localUser) {
 		this.chatFrame=chatFrame;
 		this.port=port;
+		this.localUser=localUser;
 		conversations = new ArrayList<Conversation>();
 		try{
 			 myServSocket = new ServerSocket(port);	 
@@ -62,6 +67,7 @@ public class CommunicaTCPServer extends Thread {
 			 nbConnected++;
 			 
 			 User u = new User("Bob"+nbConnected, client);
+			 u.getPrintWriter().println(localUser.getPseudo());
 			 Conversation cv = new Conversation(u);	 
 			 conversations.add(cv);
 			  chatFrame.startConversation(cv);
