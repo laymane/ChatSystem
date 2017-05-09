@@ -54,6 +54,32 @@ public class Probe extends Thread {
 		this.m = m;
 	}
 	
+	//Used for junit only
+	public User getNextPacket(){
+		MulticastSocket mcSocket = null;
+		User o = null;
+		try {
+			mcSocket = new MulticastSocket(Port);
+			mcSocket.joinGroup(IpGroup);
+			try{Thread.sleep(Variables.TIME_BETWEEN_PROBING);}catch(Exception e){}
+			
+				byte[] buf = new byte[1000];
+				DatagramPacket recv = new DatagramPacket(buf, buf.length);
+				mcSocket.receive(recv);
+			    ByteArrayInputStream byteStream = new ByteArrayInputStream(buf);
+			    ObjectInputStream is = new ObjectInputStream(new BufferedInputStream(byteStream));
+			    o = (User)is.readObject();			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mcSocket.close();
+			} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
+	}
+	
 	
 	public void run(){
 		MulticastSocket mcSocket = null;
