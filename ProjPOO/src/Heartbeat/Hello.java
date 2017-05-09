@@ -29,12 +29,15 @@ public class Hello extends Thread {
 		Port = remotePort;
 		try {
 			IpGroup = InetAddress.getByName(IP);
+			System.out.println("Local ip used by hello: "+localIP);
 			localIPtoSend = InetAddress.getByName(localIP);
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		objtosend = new User(nickname, localIPtoSend, localPort, etat);
+		User us= new User(nickname, localIPtoSend, localPort, etat);
+		objtosend = us;
+		System.err.println("Helloer sending: "+us.toString());
 
 
 	}

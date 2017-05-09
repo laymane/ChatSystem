@@ -242,21 +242,12 @@ public class ChatFrame extends javax.swing.JFrame {
 		 return cpe;
 	 }
 	 public void startConversationToDistantUser(User u){
-		 try{
-			 
-			 CommunicaTCPClient cli = new CommunicaTCPClient(4450, InetAddress.getByName("localhost"), u.getPort(), u.getPseudo(),tcpServ);
-			 Conversation c = cli.getTcpClientConversation();
-			 System.err.println("Client inited..");
-			 try{Thread.sleep(200);}catch (InterruptedException e) {}
-			 ConversationPanelElements cpe = startConversation(c);
-			 cpe.remoteUserSendMessage("You started a conversation with "+c.getUsersInConversation());
-			 //Check some port fuckery
-			 //Roll the dices
-			 //Profit
-			 
-		 } catch (UnknownHostException e) {	System.out.println("Unknown Host");
-			e.printStackTrace();
-		}
+		 CommunicaTCPClient cli = new CommunicaTCPClient(4450, u.getIP(), u.getPort(), u.getPseudo(),tcpServ);
+		 Conversation c = cli.getTcpClientConversation();
+		 System.err.println("Client inited..");
+		 try{Thread.sleep(200);}catch (InterruptedException e) {}
+		 ConversationPanelElements cpe = startConversation(c);
+		 cpe.remoteUserSendMessage("You started a conversation with "+c.getUsersInConversation());
 	 }
 	
 

@@ -22,6 +22,7 @@ public class Conversation {
 		private int id;
 		private JPanel jpanel;
 		private ConversationPanelElements conversationPanelElements=null;
+		private String alsdk = "localhost";
 		
 		
 		public Conversation(){

@@ -68,6 +68,7 @@ public class Probe extends Thread {
 				    ByteArrayInputStream byteStream = new ByteArrayInputStream(buf);
 				    ObjectInputStream is = new ObjectInputStream(new BufferedInputStream(byteStream));
 				    User o = (User)is.readObject();
+				    
 				    verifyAndUpdateUserList(o);
 				    
 				    
@@ -87,6 +88,7 @@ public class Probe extends Thread {
 
 	
 	public void verifyAndUpdateUserList(User o){
+		boolean added= false;
 		//Eviter l'ajout de doublons
 		//Pour les users deja existants: timeSinceLastPing = 0;
 		//System.out.println("test");
@@ -94,18 +96,24 @@ public class Probe extends Thread {
 			if(userList.size()==0){
 				userList.add(o);
 				m.addElement(o);
+				System.err.println("Added to user list by empty list in Probe: "+o.toString());
 			}
 			else{
 	
 				for(int i = 0; i<userList.size();i++){
-			        if (userList.get(i).getIP().equals(o.getIP())) {
-			        	userList.get(i).setTimeSinceLastPing(0);			        		    
+			        if (userList.get(i).getPseudo().equals(o.getPseudo())) {
+			        	userList.get(i).setTimeSinceLastPing(0);	
+			        	System.err.println("Updated user in Probe "+o.toString());
+			        	added = true;
 			        	break;
-			        }
-			        else{			        	
-			        	userList.add(o);
-			        	m.addElement(o);
-			        }
+						
+
+			        }		       			        				        
+				}
+				if (!added){
+					userList.add(o);
+		        	m.addElement(o);
+		        	System.err.println("Added to user list by default in Probe: "+o.toString());
 				}
 			}		
 		}

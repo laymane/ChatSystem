@@ -44,6 +44,7 @@ public class User implements Serializable {
 		this.port = port;
 		this.etat=etat;
 	}
+	
 	public User(String pseudo){
 		this.pseudo=pseudo;
 		try {
