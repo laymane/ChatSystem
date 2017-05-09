@@ -12,6 +12,7 @@ public class Variables {
 	public static final int REMOTE_PORT = 7876;
 	public static final String MULTI_IP = "226.255.255.255";
 	public static final int LOCAL_LISTENING_PORT_TCPCONNEXIONS = 4450;
-	public static final String LOCAL_IP = "192.168.1.11";
+	public static final String LOCAL_IP = "192.168.1.73";
+	
 	
 }
