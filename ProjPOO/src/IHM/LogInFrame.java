@@ -82,13 +82,15 @@ public class LogInFrame extends javax.swing.JFrame {
         jLabel1.setText("Log in ");
         jLabel1.setMaximumSize(new java.awt.Dimension(167, 24));
         
-        jTextField2.setText("Port");
+      //  jTextField2.setText("Port");
+        new GhostText(jTextField2, "Server Port");
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
             }
         });
-        jTextField3.setText("Porto");
+        //JtextField 3
+        new GhostText(jTextField3, "Hello port");
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField3ActionPerformed(evt);
@@ -207,8 +209,16 @@ private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {
     
     //Lots of stuff here should go into the launcher. Aymane, fix this.
     private void goToChatFrame(){
-	    
-			localUser.setUserName(jTextField1.getText());
+
+    		String textField = jTextField1.getText();
+    		int serverPort = Variables.LOCAL_LISTENING_PORT_TCPCONNEXIONS;
+    		
+    		if(localUser==null){
+    			System.out.println("localUser is null");
+    		}
+    		if(!jTextField2.getText().equals(""))
+    			serverPort=Integer.parseInt(jTextField2.getText());
+			localUser.setUserName(textField);
 	        remove(jPanel1);
 	        this.setVisible(false);
 	        dispose();
@@ -216,7 +226,7 @@ private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {
 	        ChatFrame cf = new ChatFrame(localUser);
 	        cf.setVisible(true);
 	        hbc.addModelToProbe(cf.getListModel());
-	        CommunicaTCPServer serv = new CommunicaTCPServer(Variables.LOCAL_LISTENING_PORT_TCPCONNEXIONS, cf, localUser);
+	        CommunicaTCPServer serv = new CommunicaTCPServer(serverPort, cf, localUser);
 	        cf.setTcpServ(serv);
 	        serv.start();
 	  	 
@@ -225,37 +235,7 @@ private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LogInFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LogInFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LogInFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LogInFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new LogInFrame().setVisible(true);
-            }
-        });
-    }
+   
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton jButton1;
